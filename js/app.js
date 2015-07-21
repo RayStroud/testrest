@@ -4,6 +4,12 @@
 	app.controller('ObjectController', ['$http', function($http) {
 		var ctrl = this;
 
+		this.editClick = function(click_id) {
+			ctrl.editObject = ctrl.objects.filter(function(object) {
+				return object.id == click_id;
+			})[0];
+		};
+
 		this.selectAllObjects = function() {
 			$http({
 				method: 'GET',
@@ -12,75 +18,79 @@
 				header: {'Content-Type': 'application/c-www-form-urlencoded'}
 			})
 			.success(function (data, status, headers, config) {
-				ctrl.selectResponse = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.responseSelectAll = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
 				ctrl.objects = data;
 			})
 			.error(function (data, status, headers, config) {
-				ctrl.selectResponse = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.responseSelectAll = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
 			});
 		};
 
-		this.editClick = function(click_id) {
-			ctrl.editObject = ctrl.objects.filter(function(object) {
-				return object.id == click_id;
-			})[0];
-		};
-
-		this.removeClick = function(click_id) {
-			ctrl.removeObject = ctrl.objects.filter(function(object) {
-				return object.id == click_id;
-			})[0];
-			ctrl.deleteObject(ctrl.removeObject)
-		};
-
-		this.insertObject = function(insertObject) {
+		this.selectObjectById = function(id) {
 			$http({
-				method: 'POST',
-				url: 'data/object.php',
-				data: insertObject,
+				method: 'GET',
+				url: 'data/object.php?id=' + id,
+				data: null,
 				header: {'Content-Type': 'application/c-www-form-urlencoded'}
 			})
 			.success(function (data, status, headers, config) {
-				ctrl.insertResponse = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.responseSelect = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.viewObject = data;
+			})
+			.error(function (data, status, headers, config) {
+				ctrl.responseSelect = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+			});
+		};
+
+		this.insertObject = function(object) {
+			$http({
+				method: 'POST',
+				url: 'data/object.php',
+				data: object,
+				header: {'Content-Type': 'application/c-www-form-urlencoded'}
+			})
+			.success(function (data, status, headers, config) {
+				ctrl.responseInsert = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
 				ctrl.addObject = null;
 				ctrl.selectAllObjects();
 			})
 			.error(function (data, status, headers, config) {
-				ctrl.insertResponse = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.responseInsert = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
 			});
 		};
 
-		this.updateObject = function(updateObject) {
+		this.updateObject = function(object) {
 			$http({
 				method: 'PUT',
 				url: 'data/object.php',
-				data: updateObject,
+				data: object,
 				header: {'Content-Type': 'application/c-www-form-urlencoded'}
 			})
 			.success(function (data, status, headers, config) {
-				ctrl.updateResponse = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.responseUpdate = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
 				ctrl.editObject = null;
 				ctrl.selectAllObjects();
 			})
 			.error(function (data, status, headers, config) {
-				ctrl.updateResponse = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.responseUpdate = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
 			});
 		};
 
-		this.deleteObject = function(deleteObject) {
+		this.deleteObject = function(id) {
 			$http({
 				method: 'DELETE',
 				url: 'data/object.php',
-				data: deleteObject,
+				data: {id: id},
 				header: {'Content-Type': 'application/c-www-form-urlencoded'}
 			})
 			.success(function (data, status, headers, config) {
-				ctrl.deleteResponse = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.responseDelete = 'SUCCESS - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
 				ctrl.removeObject = null;
 				ctrl.selectAllObjects();
+				ctrl.debugDelete = data;
 			})
 			.error(function (data, status, headers, config) {
-				ctrl.deleteResponse = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
+				ctrl.responseDelete = 'ERROR - DATA: ' + data + '|STATUS: ' + status + '|HEADERS: ' + headers + '|CONFIG: ' + config;
 			});
 		};
 

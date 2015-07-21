@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS object;
 CREATE TABLE object
 (
-	a 		INT,
-	b 		INT,
-	c 		VARCHAR(25),
+	a 	VARCHAR(25),
+	b 	VARCHAR(25),
+	c 	VARCHAR(25),
 
 	id INT NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY (id)
