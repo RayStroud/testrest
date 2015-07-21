@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html ng-app="testrest">
+<head>
+	<title>Test REST</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+	<script src="js/app.js"></script>
+	<style type="text/css">
+		.obj-box {
+			display: inline-block;
+			padding: 10px;
+			margin: 5px;
+			border: 1px dotted black;
+		}
+	</style>
+</head>
+<body> 
+	<div ng-controller="ObjectController as ctrl">
+		<h1>Test REST</h1>
+		<h2>List Objects</h2>
+		<div class="obj-box" ng-repeat="object in ctrl.objects">
+			<h3>Object #{{object.id}}</h3>
+			<div>a: {{object.a}}</div>
+			<div>b: {{object.b}}</div>
+			<div>c: {{object.c}}</div>
+			<div><button ng-click="ctrl.selectClick(object.id)">Select</button></div>
+		</div>
+		<h2>TODO - Select Object</h2>
+		<div class="obj-box" >
+			<h3>Object #{{selectObject.id}}</h3>
+			<div>a: {{selectObject.a}}</div>
+			<div>b: {{selectObject.b}}</div>
+			<div>c: {{selectObject.c}}</div>
+			<div><button ng-click="ctrl.editClick(selectObject.id)">Edit</button></div>
+			<div><button ng-click="ctrl.removeClick(selectObject.id)">Remove</button></div>
+		</div>
+		<h2>Edit Object </h2>
+		<form name="editForm" novalidate ng-submit="editForm.$valid && ctrl.updateObject(ctrl.editObject)">
+			a: <input ng-model="ctrl.editObject.a">
+			b: <input ng-model="ctrl.editObject.b">
+			c: <input ng-model="ctrl.editObject.c">
+			<button type="submit">Submit Changes</button>
+		</form>
+		<h2>Add Object </h2>
+		<form name="addForm" novalidate ng-submit="addForm.$valid && ctrl.insertObject(ctrl.addObject)">
+			a: <input ng-model="ctrl.addObject.a" type="number">
+			b: <input ng-model="ctrl.addObject.b" type="number">
+			c: <input ng-model="ctrl.addObject.c">
+			<button type="submit">Add</button>
+		</form>
+	</div>
+</body>
+</html>
