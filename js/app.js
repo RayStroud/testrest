@@ -59,10 +59,10 @@
 			});
 		};
 
-		this.updateObject = function(object) {
+		this.updateObject = function(id, object) {
 			$http({
 				method: 'PUT',
-				url: 'data/object.php',
+				url: 'data/object.php?id=' + id,
 				data: object,
 				header: {'Content-Type': 'application/c-www-form-urlencoded'}
 			})
@@ -79,8 +79,8 @@
 		this.deleteObject = function(id) {
 			$http({
 				method: 'DELETE',
-				url: 'data/object.php',
-				data: {id: id},
+				url: 'data/object.php?id=' + id,
+				data: null,
 				header: {'Content-Type': 'application/c-www-form-urlencoded'}
 			})
 			.success(function (data, status, headers, config) {

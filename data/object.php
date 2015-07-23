@@ -1,16 +1,4 @@
 <?php
-	function selectById($db, $id)
-	{
-		$object = new stdClass();
-		$stmt = $db->prepare('SELECT a, b, c, id FROM object WHERE id = ? LIMIT 1;');
-		$stmt->bind_param('i', $id);
-		$stmt->execute();
-		$stmt->bind_result($object->a, $object->b, $object->c, $object->id);
-		$stmt->fetch();
-		echo json_encode($object);
-		$stmt->free_result();
-		$stmt->close();
-	}
 	function selectAll($db)
 	{
 		$stmt = $db->prepare('SELECT a, b, c, id FROM object;');
@@ -30,20 +18,32 @@
 		$stmt->free_result();
 		$stmt->close();
 	}
-	function insert($db, $object)
+	function selectById($db, $id)
+	{
+		$object = new stdClass();
+		$stmt = $db->prepare('SELECT a, b, c, id FROM object WHERE id = ? LIMIT 1;');
+		$stmt->bind_param('i', $id);
+		$stmt->execute();
+		$stmt->bind_result($object->a, $object->b, $object->c, $object->id);
+		$stmt->fetch();
+		echo json_encode($object);
+		$stmt->free_result();
+		$stmt->close();
+	}
+	function insert($db, $data)
 	{
 		var_dump($object);
 		$stmt = $db->prepare('INSERT INTO object (a, b, c) VALUES (?, ?, ?);');
-		$stmt->bind_param('sss', $object->a, $object->b, $object->c);
+		$stmt->bind_param('sss', $data->a, $data->b, $data->c);
 		$stmt->execute();
 		echo $stmt->insert_id;
 		$stmt->free_result();
 		$stmt->close();
 	}
-	function update($db, $object)
+	function update($db, $id, $data)
 	{
 		$stmt = $db->prepare('UPDATE object SET a = ?, b = ?, c = ? WHERE id = ? LIMIT 1;');
-		$stmt->bind_param('sssi', $object->a, $object->b, $object->c, $object->id);
+		$stmt->bind_param('sssi', $data->a, $data->b, $data->c, $id);
 		$stmt->execute();
 		echo $stmt->affected_rows;
 		$stmt->free_result();
@@ -64,7 +64,7 @@
 		$host = 'localhost';
 		$dbname = 'testrest';
 		$user = 'root';
-		$password = '';
+		$password = 'root';
 		$db = new mysqli($host, $user, $password, $dbname);
 		switch($_SERVER['REQUEST_METHOD'])
 		{
@@ -79,16 +79,21 @@
 				}
 				break;
 			case 'POST':
-				$object = json_decode(file_get_contents("php://input"));
-				insert($db, $object);
+				$data = json_decode(file_get_contents("php://input"));
+				insert($db, $data);
 				break;
 			case 'PUT':
-				$object = json_decode(file_get_contents("php://input"));
-				update($db, $object);
+				if(isset($_GET['id']))
+				{
+					$data = json_decode(file_get_contents("php://input"));
+					update($db, $_GET['id'], $data);
+				}
 				break;
 			case 'DELETE':
-				$object = json_decode(file_get_contents("php://input"));
-				delete($db, $object->id);
+				if(isset($_GET['id']))
+				{
+					delete($db, $_GET['id']);
+				}
 				break;
 		}
 		$db->close();
